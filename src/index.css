@@ -1,74 +1,89 @@
-/* FocusBoard Design Tokens & Reset */
+/* ========================================================
+   FocusBoard — Figma Design System Tokens & Base Reset
+   Matching Figma: FocusBoard — Dashboard References
+   ======================================================== */
+
 :root {
-  /* Brand colors */
-  --color-primary: #6E26B4;
-  --color-primary-hover: #581C87;
-  --color-primary-light: #F3E8FF;
+  /* Brand Figma Colors */
+  --color-primary: #5243E8;
+  --color-primary-hover: #4335CE;
+  --color-primary-light: #ECE9FE;
   --color-primary-text: #FFFFFF;
 
-  /* Neutrals */
-  --bg-page: #F8FAFC;
+  /* Canvas and Neutral Surfaces */
+  --bg-page: #F5F6FA;
   --bg-card: #FFFFFF;
   --bg-input: #FFFFFF;
-  --text-main: #0F172A;
-  --text-muted: #64748B;
-  --text-subtle: #94A3B8;
-  --border-subtle: #E2E8F0;
-  --border-focus: #6E26B4;
+  --text-main: #111827;
+  --text-muted: #6B7280;
+  --text-subtle: #9CA3AF;
+  --border-subtle: #EDEBF5;
+  --border-focus: #5243E8;
 
-  /* Sidebar */
-  --bg-sidebar: #0F172A;
-  --text-sidebar: #94A3B8;
-  --text-sidebar-active: #FFFFFF;
-  --bg-sidebar-hover: #1E293B;
-  --bg-sidebar-active: #6E26B4;
-  --border-sidebar: #1E293B;
+  /* White Sidebar System (Figma Spec) */
+  --bg-sidebar: #FFFFFF;
+  --text-sidebar: #6B7280;
+  --text-sidebar-active: #5243E8;
+  --bg-sidebar-hover: #F8F7FD;
+  --bg-sidebar-active: #ECE9FE;
+  --border-sidebar: #EBE8F3;
 
   /* Status Colors */
-  --status-todo: #64748B;
-  --status-todo-bg: #F1F5F9;
-  --status-todo-border: #CBD5E1;
+  --status-todo: #6B7280;
+  --status-todo-bg: #F3F4F6;
+  --status-todo-border: #E5E7EB;
 
-  --status-inprogress: #2563EB;
-  --status-inprogress-bg: #EFF6FF;
-  --status-inprogress-border: #BFDBFE;
+  --status-inprogress: #5243E8;
+  --status-inprogress-bg: #ECE9FE;
+  --status-inprogress-border: #DDD6FE;
 
   --status-completed: #10B981;
   --status-completed-bg: #ECFDF5;
   --status-completed-border: #A7F3D0;
 
-  /* Priority Colors */
-  --priority-high: #DC2626;
-  --priority-high-bg: #FEF2F2;
-  --priority-high-border: #FECACA;
+  /* Priority Colors (Figma Match) */
+  --priority-high: #E04F16;
+  --priority-high-bg: #FFF1EC;
+  --priority-high-border: #FFD8CC;
 
-  --priority-med: #D97706;
-  --priority-med-bg: #FFFBEB;
+  --priority-med: #B45309;
+  --priority-med-bg: #FEF3C7;
   --priority-med-border: #FDE68A;
 
-  --priority-low: #0284C7;
-  --priority-low-bg: #F0F9FF;
-  --priority-low-border: #BAE6FD;
+  --priority-low: #047857;
+  --priority-low-bg: #ECFDF5;
+  --priority-low-border: #A7F3D0;
+
+  /* Category Badges */
+  --category-design-bg: #F3E8FF;
+  --category-design-text: #6D28D9;
+  --category-dev-bg: #EFF6FF;
+  --category-dev-text: #1D4ED8;
+  --category-content-bg: #F0FDF4;
+  --category-content-text: #15803D;
+  --category-general-bg: #F3F4F6;
+  --category-general-text: #4B5563;
 
   /* Spacing & Radii */
-  --radius-sm: 6px;
-  --radius-md: 10px;
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
   --radius-lg: 16px;
   --radius-xl: 20px;
   --radius-full: 9999px;
 
-  /* Elevation */
-  --shadow-sm: 0 1px 2px 0 rgba(15, 23, 42, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.07), 0 2px 4px -2px rgba(15, 23, 42, 0.05);
-  --shadow-lg: 0 10px 15px -3px rgba(15, 23, 42, 0.08), 0 4px 6px -4px rgba(15, 23, 42, 0.04);
-  --shadow-modal: 0 20px 25px -5px rgba(15, 23, 42, 0.15), 0 8px 10px -6px rgba(15, 23, 42, 0.1);
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgba(17, 24, 39, 0.03);
+  --shadow-card: 0 1px 3px rgba(17, 24, 39, 0.04), 0 1px 2px rgba(17, 24, 39, 0.02);
+  --shadow-md: 0 4px 6px -1px rgba(17, 24, 39, 0.06), 0 2px 4px -2px rgba(17, 24, 39, 0.03);
+  --shadow-modal: 0 20px 25px -5px rgba(82, 67, 232, 0.12), 0 8px 10px -6px rgba(17, 24, 39, 0.06);
 
-  /* Font typography */
+  /* Typography */
   --font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --transition-normal: 180ms ease-in-out;
+  --transition-normal: 160ms ease-in-out;
 }
 
-/* CSS Reset & Defaults */
+/* CSS Reset */
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -107,13 +122,11 @@ a {
   text-decoration: none;
 }
 
-/* Accessible visible focus states */
 :focus-visible {
   outline: 2px solid var(--border-focus);
   outline-offset: 2px;
 }
 
-/* Accessibility: Reduced motion support */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;

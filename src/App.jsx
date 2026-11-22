@@ -1,22 +1,21 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
-  CheckSquare,
+  ListTodo,
   Clock,
-  CheckCircle2,
-  TrendingUp,
+  Check,
   Plus,
 } from "lucide-react";
 
-// Components
+// Components matching Figma
 import Sidebar from "./components/Sidebar";
 import Header from "./components/Header";
 import StatCard from "./components/StatCard";
 import FocusNotes from "./components/FocusNotes";
 import TaskList from "./components/TaskList";
 import TaskForm from "./components/TaskForm";
-import SearchBar from "./components/SearchBar";
 import FilterTabs from "./components/FilterTabs";
 import DeleteConfirmModal from "./components/DeleteConfirmModal";
+import MobileNav from "./components/MobileNav";
 
 // Initial sample data & hooks
 import { INITIAL_SAMPLE_TASKS } from "./data/sampleTasks";
@@ -29,39 +28,24 @@ import "./styles/components.css";
 import "./styles/responsive.css";
 
 export default function App() {
-  // Main tasks state synchronized with localStorage
+  // Main tasks state persisted in localStorage
   const [tasks, setTasks] = useLocalStorage("focusboard_tasks", INITIAL_SAMPLE_TASKS);
+
+  // Active navigation tab
+  const [activeNavTab, setActiveNavTab] = useState("Overview");
 
   // Search and Filter states
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("All");
   const [selectedPriority, setSelectedPriority] = useState("All");
 
-  // Modal & Drawer UI states
+  // Modal UI states
   const [isTaskFormOpen, setIsTaskFormOpen] = useState(false);
   const [taskToEdit, setTaskToEdit] = useState(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [taskToDelete, setTaskToDelete] = useState(null);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  // URL query parameter support for direct modal testing & inspection
-  React.useEffect(() => {
-    if (typeof window === "undefined") return;
-    const params = new URLSearchParams(window.location.search);
-    const modalParam = params.get("modal");
-    if (modalParam === "create") {
-      setTaskToEdit(null);
-      setIsTaskFormOpen(true);
-    } else if (modalParam === "edit" && tasks.length > 0) {
-      setTaskToEdit(tasks[0]);
-      setIsTaskFormOpen(true);
-    } else if (modalParam === "delete" && tasks.length > 0) {
-      setTaskToDelete(tasks[0]);
-      setIsDeleteModalOpen(true);
-    }
-  }, [tasks]);
-
-  // 1. Dynamic statistics (Calculated on ALL tasks, never filtered tasks)
+  // Dynamic statistics calculated on ALL tasks
   const {
     totalTasks,
     inProgressTasks,
@@ -78,7 +62,7 @@ export default function App() {
     Completed: completedTasks,
   };
 
-  // 2. Combined filtering (Search + Status + Priority)
+  // Combined filtering (Search + Status + Priority)
   const filteredTasks = filterTasks(tasks, {
     searchQuery,
     selectedStatus,
@@ -96,13 +80,12 @@ export default function App() {
     setSelectedPriority("All");
   };
 
-  // 3. CRUD: Create Task
+  // CRUD Handlers
   const handleOpenCreateModal = () => {
     setTaskToEdit(null);
     setIsTaskFormOpen(true);
   };
 
-  // 4. CRUD: Edit Task
   const handleOpenEditModal = (task) => {
     setTaskToEdit(task);
     setIsTaskFormOpen(true);
@@ -110,17 +93,14 @@ export default function App() {
 
   const handleSaveTask = (taskData) => {
     if (taskToEdit) {
-      // Immutable update of existing task (preserves task ID)
       setTasks((prevTasks) =>
         prevTasks.map((t) => (t.id === taskData.id ? taskData : t))
       );
     } else {
-      // Immutable prepend of newly created task
       setTasks((prevTasks) => [taskData, ...prevTasks]);
     }
   };
 
-  // 5. CRUD: Delete Task
   const handleOpenDeleteModal = (task) => {
     setTaskToDelete(task);
     setIsDeleteModalOpen(true);
@@ -132,7 +112,6 @@ export default function App() {
     setTaskToDelete(null);
   };
 
-  // 6. Quick Status Change
   const handleStatusChange = (taskId, newStatus) => {
     setTasks((prevTasks) =>
       prevTasks.map((t) =>
@@ -141,112 +120,128 @@ export default function App() {
     );
   };
 
+  // URL query parameter support for direct modal testing & inspection
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    const modalParam = params.get("modal");
+    if (modalParam === "create") {
+      setTaskToEdit(null);
+      setIsTaskFormOpen(true);
+    } else if (modalParam === "edit" && tasks.length > 0) {
+      setTaskToEdit(tasks[0]);
+      setIsTaskFormOpen(true);
+    } else if (modalParam === "delete" && tasks.length > 0) {
+      setTaskToDelete(tasks[0]);
+      setIsDeleteModalOpen(true);
+    }
+  }, [tasks]);
+
   return (
     <div className="app-container">
-      {/* Sidebar Navigation */}
+      {/* White Left Sidebar (Desktop Figma Frame 1:2) */}
       <Sidebar
-        isOpen={isMobileMenuOpen}
-        onClose={() => setIsMobileMenuOpen(false)}
+        activeTab={activeNavTab}
+        onTabSelect={setActiveNavTab}
       />
 
       {/* Main Content Area */}
       <div className="main-wrapper">
-        <Header
-          onToggleMobileMenu={() => setIsMobileMenuOpen((prev) => !prev)}
-          onOpenCreateModal={handleOpenCreateModal}
-        />
+        <Header />
 
         <main className="dashboard-content">
-          {/* Dashboard Title & Overview Banner */}
+          {/* Main Title Row matching Figma */}
           <section className="dashboard-title-bar">
             <div>
-              <h1>FocusBoard Dashboard</h1>
-              <p>
-                Manage, prioritize, and track your daily engineering workflows with
-                clarity.
-              </p>
+              <h1>Your work, in focus.</h1>
+              <p>Plan your day, stay organized, and celebrate small wins.</p>
             </div>
             <button
               type="button"
               className="btn btn-primary"
               onClick={handleOpenCreateModal}
-              aria-label="Add new task"
+              aria-label="Create new task"
             >
-              <Plus size={16} strokeWidth={2.5} aria-hidden="true" />
-              <span>Add Task</span>
+              <Plus size={16} strokeWidth={2.4} aria-hidden="true" />
+              <span>New task</span>
             </button>
-          </section>
-
-          {/* Dynamic Statistics Cards */}
-          <section
-            className="stats-grid"
-            aria-label="Dashboard Statistics Overview"
-          >
-            <StatCard
-              title="Total Tasks"
-              value={totalTasks}
-              icon={CheckSquare}
-              variant="total"
-              subtitle={`${todoTasks} waiting in backlog`}
-            />
-            <StatCard
-              title="In Progress"
-              value={inProgressTasks}
-              icon={Clock}
-              variant="inprogress"
-              subtitle="Currently active in sprint"
-            />
-            <StatCard
-              title="Completed"
-              value={completedTasks}
-              icon={CheckCircle2}
-              variant="completed"
-              subtitle="Finished deliverables"
-            />
-            <StatCard
-              title="Completion Rate"
-              value={`${completionPercentage}%`}
-              icon={TrendingUp}
-              variant="rate"
-              subtitle={`${completedTasks} of ${totalTasks} completed`}
-              progress={completionPercentage}
-            />
           </section>
 
           {/* Focus Notes 3-Slide Carousel */}
           <FocusNotes />
 
-          {/* Task Management Section */}
-          <section className="task-section" aria-label="Tasks Management">
+          {/* Three White Overview Statistic Cards */}
+          <section
+            className="stats-grid-three"
+            aria-label="Dashboard Overview Statistics"
+          >
+            <StatCard
+              title="Total tasks"
+              value={totalTasks}
+              icon={ListTodo}
+              variant="total"
+              subtext="Across all projects"
+            />
+            <StatCard
+              title="In progress"
+              value={inProgressTasks}
+              icon={Clock}
+              variant="inprogress"
+              subtext="Keep the momentum"
+            />
+            <StatCard
+              title="Completed"
+              value={completedTasks}
+              icon={Check}
+              variant="completed"
+              subtext="Great work this week"
+            />
+          </section>
+
+          {/* My Tasks Section */}
+          <section className="task-section" aria-label="My Tasks Section">
             <div className="task-section-header">
               <div className="task-section-title-wrap">
-                <h2>Task Board</h2>
-                <span className="task-count-badge">
-                  {filteredTasks.length} {filteredTasks.length === 1 ? "task" : "tasks"}
-                </span>
+                <h2>My tasks</h2>
+                <p>Manage and track everything in one place.</p>
               </div>
+
+              {/* Desktop View all tasks button */}
+              <button
+                type="button"
+                className="btn-soft-purple"
+                onClick={handleClearFilters}
+                aria-label="View all tasks"
+              >
+                View all tasks
+              </button>
+
+              {/* Mobile + Add Task Button */}
+              <button
+                type="button"
+                className="mobile-add-task-btn"
+                onClick={handleOpenCreateModal}
+                aria-label="Create new task"
+              >
+                <Plus size={18} strokeWidth={2.5} />
+              </button>
             </div>
 
-            {/* Search and Filters Bar */}
-            <div className="filter-bar-container">
-              <SearchBar
-                searchQuery={searchQuery}
-                onSearchChange={setSearchQuery}
-                onClearSearch={() => setSearchQuery("")}
-              />
+            {/* Filter Toolbar matching Figma */}
+            <FilterTabs
+              selectedStatus={selectedStatus}
+              onStatusChange={setSelectedStatus}
+              selectedPriority={selectedPriority}
+              onPriorityChange={setSelectedPriority}
+              searchQuery={searchQuery}
+              onSearchChange={setSearchQuery}
+              onClearSearch={() => setSearchQuery("")}
+              onClearFilters={handleClearFilters}
+              hasActiveFilters={hasActiveFilters}
+              statusCounts={statusCounts}
+            />
 
-              <FilterTabs
-                selectedStatus={selectedStatus}
-                onStatusChange={setSelectedStatus}
-                selectedPriority={selectedPriority}
-                onPriorityChange={setSelectedPriority}
-                onClearFilters={handleClearFilters}
-                hasActiveFilters={hasActiveFilters}
-                statusCounts={statusCounts}
-              />
-            </div>
-
-            {/* Task List Grid with Empty States */}
+            {/* Tasks Horizontal Row Cards List */}
             <TaskList
               tasks={filteredTasks}
               totalTasksCount={totalTasks}
@@ -260,7 +255,13 @@ export default function App() {
         </main>
       </div>
 
-      {/* Task Create / Edit Modal Dialog */}
+      {/* Mobile Bottom Navigation Bar (Figma Mobile Frame 1:167) */}
+      <MobileNav
+        activeTab={activeNavTab}
+        onTabSelect={setActiveNavTab}
+      />
+
+      {/* Create / Edit Task Modal Dialog */}
       <TaskForm
         isOpen={isTaskFormOpen}
         onClose={() => {

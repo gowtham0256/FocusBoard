@@ -1,15 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Calendar,
-  Clock,
-  CheckCircle2,
-  CircleDashed,
+  Check,
+  MoreHorizontal,
   Pencil,
   Trash2,
-  AlertCircle,
-  Flag,
+  Clock,
+  Circle,
 } from "lucide-react";
-import { formatDisplayDate, isTaskOverdue } from "../utils/taskUtils";
+import { formatDisplayDate } from "../utils/taskUtils";
 
 export default function TaskCard({
   task,
@@ -18,68 +17,127 @@ export default function TaskCard({
   onStatusChange,
 }) {
   const { id, title, description, category, status, priority, dueDate } = task;
+  const [showMenu, setShowMenu] = useState(false);
 
-  const overdue = isTaskOverdue(dueDate, status);
-
-  // Status icon configuration
-  const renderStatusBadge = () => {
-    switch (status) {
-      case "Completed":
-        return (
-          <span className="badge badge-status-completed">
-            <CheckCircle2 size={12} aria-hidden="true" />
-            <span>Completed</span>
-          </span>
-        );
-      case "In progress":
-        return (
-          <span className="badge badge-status-inprogress">
-            <Clock size={12} aria-hidden="true" />
-            <span>In progress</span>
-          </span>
-        );
-      case "To do":
-      default:
-        return (
-          <span className="badge badge-status-todo">
-            <CircleDashed size={12} aria-hidden="true" />
-            <span>To do</span>
-          </span>
-        );
+  // Status toggle handler
+  const handleToggleNextStatus = () => {
+    if (status === "To do") {
+      onStatusChange(id, "In progress");
+    } else if (status === "In progress") {
+      onStatusChange(id, "Completed");
+    } else {
+      onStatusChange(id, "To do");
     }
   };
 
-  // Priority badge configuration
-  const renderPriorityBadge = () => {
-    const priorityClass =
-      priority === "High"
-        ? "badge-priority-high"
-        : priority === "Medium"
-        ? "badge-priority-medium"
-        : "badge-priority-low";
+  // Status button icon/style
+  const renderStatusButton = () => {
+    if (status === "Completed") {
+      return (
+        <button
+          type="button"
+          className="task-status-toggle-btn completed"
+          onClick={handleToggleNextStatus}
+          aria-label={`Mark ${title} as To do`}
+          title="Status: Completed (Click to reset to To do)"
+        >
+          <Check size={12} strokeWidth={3} />
+        </button>
+      );
+    }
+
+    if (status === "In progress") {
+      return (
+        <button
+          type="button"
+          className="task-status-toggle-btn inprogress"
+          onClick={handleToggleNextStatus}
+          aria-label={`Mark ${title} as Completed`}
+          title="Status: In progress (Click to mark Completed)"
+        >
+          <div style={{ width: 8, height: 8, borderRadius: "50%", backgroundColor: "#5243E8" }} />
+        </button>
+      );
+    }
 
     return (
-      <span className={`badge ${priorityClass}`}>
-        <Flag size={11} aria-hidden="true" />
-        <span>{priority}</span>
-      </span>
+      <button
+        type="button"
+        className="task-status-toggle-btn todo"
+        onClick={handleToggleNextStatus}
+        aria-label={`Mark ${title} as In progress`}
+        title="Status: To do (Click to mark In progress)"
+      />
     );
   };
 
+  // Category badge class
+  const getCategoryClass = (cat) => {
+    const lower = (cat || "").toLowerCase();
+    if (lower.includes("design")) return "badge-category-design";
+    if (lower.includes("dev")) return "badge-category-development";
+    if (lower.includes("content")) return "badge-category-content";
+    return "badge-category-general";
+  };
+
+  // Priority badge class
+  const getPriorityClass = (pri) => {
+    if (pri === "High") return "badge-priority-high";
+    if (pri === "Medium") return "badge-priority-medium";
+    return "badge-priority-low";
+  };
+
   return (
-    <article
-      className="task-card"
-      data-status={status}
-      aria-label={`Task: ${title}`}
-    >
-      <div className="task-card-header">
-        <div className="task-card-badges">
-          {category && <span className="badge badge-category">{category}</span>}
-          {renderStatusBadge()}
-          {renderPriorityBadge()}
+    <div className="task-row-card" role="article" aria-label={`Task: ${title}`}>
+      {/* Left: Status Toggle + Title & Subtitle */}
+      <div className="task-row-left">
+        {renderStatusButton()}
+
+        <div className="task-text-info">
+          <div
+            className="task-title-text"
+            style={{
+              textDecoration: status === "Completed" ? "line-through" : "none",
+              opacity: status === "Completed" ? 0.75 : 1,
+            }}
+          >
+            {title}
+          </div>
+          {description && <div className="task-desc-text">{description}</div>}
+        </div>
+      </div>
+
+      {/* Right: Category + Priority + Due Date + Actions */}
+      <div className="task-row-right">
+        {category && (
+          <span className={`badge badge-category ${getCategoryClass(category)}`}>
+            {category}
+          </span>
+        )}
+
+        <span className={`badge ${getPriorityClass(priority)}`}>
+          {priority}
+        </span>
+
+        <div className="task-due-info">
+          <Calendar size={13} aria-hidden="true" />
+          <span>{formatDisplayDate(dueDate)}</span>
         </div>
 
-        <div className="task-card-actions">
+        {/* Quick status dropdown for explicit accessibility */}
+        <select
+          className="task-row-status-select"
+          value={status}
+          onChange={(e) => onStatusChange(id, e.target.value)}
+          aria-label={`Change status for ${title}`}
+        >
+          <option value="To do">To do</option>
+          <option value="In progress">In progress</option>
+          <option value="Completed">Completed</option>
+        </select>
+
+        {/* Action Buttons */}
+        <div className="task-actions-group">
           <button
             type="button"
             className="btn-icon"
@@ -87,7 +145,7 @@ export default function TaskCard({
             aria-label={`Edit task: ${title}`}
             title="Edit task"
           >
-            <Pencil size={15} />
+            <Pencil size={14} />
           </button>
           <button
             type="button"
@@ -97,46 +155,10 @@ export default function TaskCard({
             title="Delete task"
             style={{ color: "#EF4444" }}
           >
-            <Trash2 size={15} />
+            <Trash2 size={14} />
           </button>
         </div>
       </div>
-
-      <div className="task-card-body">
-        <h3 className="task-card-title">{title}</h3>
-        {description && <p className="task-card-desc">{description}</p>}
-      </div>
-
-      <div className="task-card-footer">
-        <div className={`task-due-date ${overdue ? "overdue" : ""}`}>
-          {overdue ? (
-            <AlertCircle size={13} aria-hidden="true" />
-          ) : (
-            <Calendar size={13} aria-hidden="true" />
-          )}
-          <span>
-            {formatDisplayDate(dueDate)}
-            {overdue && " (Overdue)"}
-          </span>
-        </div>
-
-        <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-          <label htmlFor={`quick-status-${id}`} style={{ display: "none" }}>
-            Change status for {title}
-          </label>
-          <select
-            id={`quick-status-${id}`}
-            className="quick-status-select"
-            value={status}
-            onChange={(e) => onStatusChange(id, e.target.value)}
-            aria-label={`Change status for ${title}`}
-          >
-            <option value="To do">To do</option>
-            <option value="In progress">In progress</option>
-            <option value="Completed">Completed</option>
-          </select>
-        </div>
-      </div>
-    </article>
+    </div>
   );
 }

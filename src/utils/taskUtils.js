@@ -51,6 +51,7 @@ export function filterTasks(tasks = [], { searchQuery = "", selectedStatus = "Al
     // 2. Status filter
     const matchesStatus =
       selectedStatus === "All" ||
+      selectedStatus === "All tasks" ||
       task.status === selectedStatus;
 
     // 3. Priority filter
@@ -75,7 +76,6 @@ export function formatDisplayDate(dateStr) {
     return date.toLocaleDateString("en-US", {
       month: "short",
       day: "numeric",
-      year: "numeric"
     });
   } catch {
     return dateStr;

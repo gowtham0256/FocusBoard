@@ -1,46 +1,41 @@
 /* ========================================================
-   FocusBoard Responsive Breakpoints
-   - Large Desktop: > 1200px
-   - Desktop / Laptop: 1024px
+   FocusBoard — Figma Responsive Implementation
+   - Desktop: 1440px (Frame 1:2)
    - Tablet: 768px
-   - Mobile: 480px / 390px
+   - Mobile: 390px (Frame 1:167)
    ======================================================== */
 
 /* --- Tablet Breakpoint (max-width: 1024px) --- */
 @media (max-width: 1024px) {
-  .dashboard-content {
-    padding: 24px;
-    gap: 24px;
-  }
-
-  .stats-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
-  }
-
-  .task-list-grid {
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 16px;
-  }
-
   .sidebar {
-    width: 220px;
-    min-width: 220px;
+    width: 200px;
+    min-width: 200px;
+  }
+
+  .dashboard-content {
+    padding: 12px 24px 36px;
+  }
+
+  .stats-grid-three {
+    gap: 12px;
+  }
+
+  .carousel-mini-task-card {
+    display: none;
   }
 }
 
-/* --- Medium Tablet & Small Screens (max-width: 768px) --- */
+/* --- Tablet (max-width: 768px) --- */
 @media (max-width: 768px) {
-  /* Sidebar transforms to off-canvas drawer */
   .sidebar {
     position: fixed;
     top: 0;
     bottom: 0;
     left: 0;
-    width: 280px;
-    min-width: 280px;
+    width: 240px;
     transform: translateX(-100%);
     box-shadow: var(--shadow-modal);
+    transition: transform var(--transition-normal);
   }
 
   .sidebar.open {
@@ -51,197 +46,275 @@
     display: block;
     position: fixed;
     inset: 0;
-    background-color: rgba(15, 23, 42, 0.6);
+    background-color: rgba(17, 24, 39, 0.4);
     backdrop-filter: blur(2px);
     z-index: 39;
   }
 
-  .mobile-menu-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 38px;
-    height: 38px;
-    border-radius: var(--radius-md);
-    background-color: var(--bg-page);
-    border: 1px solid var(--border-subtle);
-    color: var(--text-main);
-  }
-
   .app-header {
-    padding: 12px 20px;
+    padding: 16px 20px 8px;
   }
 
   .dashboard-content {
-    padding: 20px 16px;
+    padding: 10px 20px 80px;
     gap: 20px;
   }
 
-  .header-date-badge {
-    display: none;
+  .stats-grid-three {
+    grid-template-columns: repeat(3, 1fr);
   }
 
-  .stats-grid {
-    grid-template-columns: repeat(2, 1fr);
+  .task-row-card {
+    flex-direction: column;
+    align-items: flex-start;
     gap: 12px;
   }
 
-  .stat-card {
-    padding: 16px;
+  .task-row-right {
+    width: 100%;
+    justify-content: space-between;
+    padding-top: 10px;
+    border-top: 1px solid var(--border-subtle);
   }
 
-  .stat-value {
+  .filter-bar-container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filter-bar-right {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .search-bar-wrap {
+    flex: 1;
+    width: auto;
+  }
+}
+
+/* --- Mobile Breakpoint (max-width: 480px / 390px — Figma Mobile Frame 1:167) --- */
+@media (max-width: 480px) {
+  /* Hide desktop sidebar */
+  .sidebar {
+    display: none !important;
+  }
+
+  .sidebar-overlay {
+    display: none !important;
+  }
+
+  .app-header {
+    padding: 16px 16px 8px;
+  }
+
+  .breadcrumb-nav {
+    display: none;
+  }
+
+  /* Compact Mobile Header */
+  .mobile-brand-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 17px;
+    font-weight: 700;
+    color: #111827;
+  }
+
+  .dashboard-content {
+    padding: 8px 16px 90px;
+    gap: 18px;
+  }
+
+  .dashboard-title-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .dashboard-title-bar h1 {
     font-size: 24px;
   }
 
+  .dashboard-title-bar .btn-primary {
+    display: none; /* Mobile uses the + button beside My tasks title */
+  }
+
+  /* Mobile Focus Notes Carousel */
   .focus-carousel-container {
-    padding: 20px;
-    min-height: auto;
+    padding: 18px;
+    border-radius: var(--radius-md);
   }
 
   .focus-slide-title {
     font-size: 18px;
   }
 
-  .focus-slide-text {
-    font-size: 13px;
+  .focus-carousel-right {
+    display: none;
   }
 
-  .filter-bar-container {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 14px;
-    padding: 14px;
-  }
-
-  .search-bar-wrapper {
-    max-width: 100%;
-    width: 100%;
-  }
-
-  .filter-tabs-wrapper {
-    flex-direction: column;
-    align-items: stretch;
+  /* Mobile 2 Compact Overview Cards (Figma: Total tasks & Completed) */
+  .stats-grid-three {
+    grid-template-columns: 1fr 1fr;
     gap: 10px;
   }
 
-  .status-tabs-list {
-    width: 100%;
+  .stat-card-white:nth-child(2) {
+    display: none; /* Third Figma mobile spec shows Total tasks and Completed side-by-side */
+  }
+
+  .stat-card-white {
+    padding: 14px 16px;
+    border-radius: var(--radius-sm);
+  }
+
+  .stat-card-value {
+    font-size: 22px;
+  }
+
+  /* My Tasks Section on Mobile */
+  .task-section-header {
     display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .task-section-header .btn-soft-purple {
+    display: none;
+  }
+
+  .mobile-add-task-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-sm);
+    background-color: var(--color-primary);
+    color: #FFFFFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .filter-bar-container {
+    padding: 6px;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    gap: 8px;
+  }
+
+  .search-bar-wrap {
+    width: 100%;
+  }
+
+  .search-input {
+    background-color: #FFFFFF;
+    padding: 9px 30px 9px 34px;
+    border-radius: var(--radius-sm);
+  }
+
+  .status-tabs-row {
+    width: 100%;
     overflow-x: auto;
-    padding: 4px;
+    padding-bottom: 2px;
   }
 
   .status-tab-btn {
-    flex: 1;
-    justify-content: center;
     white-space: nowrap;
     font-size: 12px;
-    padding: 6px 8px;
+    padding: 6px 10px;
   }
 
   .priority-select-wrap {
-    width: 100%;
+    display: none; /* Clean mobile toolbar matches Figma */
   }
 
-  .priority-select {
-    width: 100%;
+  /* Mobile Task Cards */
+  .task-row-card {
+    padding: 14px 16px;
+    border-radius: var(--radius-md);
   }
 
-  .task-list-grid {
-    grid-template-columns: 1fr;
-    gap: 14px;
+  .task-row-left {
+    gap: 10px;
+  }
+
+  .task-title-text {
+    font-size: 14px;
+  }
+
+  .task-row-right {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    padding-top: 8px;
+  }
+
+  .task-row-status-select {
+    display: none;
+  }
+
+  /* Mobile Bottom Navigation Bar (Fixed 4 items: Overview, Tasks, Calendar, Settings) */
+  .mobile-bottom-nav {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 62px;
+    background-color: #FFFFFF;
+    border-top: 1px solid var(--border-sidebar);
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+    z-index: 50;
+    padding-bottom: env(safe-area-inset-bottom, 0);
+  }
+
+  .mobile-nav-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    color: #9CA3AF;
+    font-size: 11px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: color var(--transition-normal);
+  }
+
+  .mobile-nav-item.active {
+    color: var(--color-primary);
+    font-weight: 600;
+  }
+
+  /* Modal Form Mobile Refinement */
+  .modal-dialog {
+    margin: 12px;
+    max-height: 94vh;
   }
 
   .form-row {
     grid-template-columns: 1fr;
-    gap: 14px;
-  }
-}
-
-/* --- Mobile Breakpoint (max-width: 480px / 390px) --- */
-@media (max-width: 480px) {
-  .app-header {
-    padding: 10px 14px;
-  }
-
-  .breadcrumb-nav span:first-child,
-  .breadcrumb-nav span:nth-child(2) {
-    display: none;
-  }
-
-  .app-header .btn-primary span {
-    display: none;
-  }
-
-  .app-header .btn-primary {
-    padding: 8px;
-    width: 36px;
-    height: 36px;
-    border-radius: var(--radius-md);
-  }
-
-  .dashboard-title-bar {
-    flex-direction: column;
-    align-items: flex-start;
     gap: 12px;
   }
 
-  .dashboard-title-bar h1 {
-    font-size: 22px;
-  }
-
-  .stats-grid {
-    grid-template-columns: 1fr;
-    gap: 10px;
-  }
-
-  .stat-card {
-    padding: 14px;
-  }
-
-  .modal-dialog {
-    max-width: 100%;
-    margin: 10px;
-    border-radius: var(--radius-md);
-  }
-
   .modal-header {
-    padding: 16px;
+    padding: 18px 20px 12px;
   }
 
   .form-body {
-    padding: 16px;
-    gap: 14px;
+    padding: 12px 20px 18px;
   }
 
   .modal-footer {
-    padding: 14px 16px;
+    padding: 12px 20px 20px;
     flex-direction: column-reverse;
-    gap: 10px;
   }
 
   .modal-footer .btn {
     width: 100%;
-  }
-
-  .task-card-footer {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
-  }
-
-  .quick-status-select {
-    width: 100%;
-  }
-
-  .focus-carousel-controls {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 14px;
-  }
-
-  .carousel-arrow-buttons {
-    align-self: flex-end;
   }
 }

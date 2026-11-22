@@ -5,39 +5,23 @@ export default function StatCard({
   value,
   icon: Icon,
   variant = "total",
-  subtitle,
-  progress = null,
+  subtext,
 }) {
   const iconVariantClass = `stat-icon-${variant}`;
 
   return (
-    <div className="stat-card" role="region" aria-label={`${title} statistic`}>
+    <div className="stat-card-white" role="region" aria-label={`${title} statistic`}>
       <div className="stat-card-top">
-        <span className="stat-label">{title}</span>
-        <div className={`stat-icon-wrap ${iconVariantClass}`} aria-hidden="true">
-          {Icon && <Icon size={20} />}
+        <div className={`stat-icon-square ${iconVariantClass}`} aria-hidden="true">
+          {Icon && <Icon size={16} strokeWidth={2.4} />}
         </div>
+        <span className="stat-card-label">{title}</span>
       </div>
 
-      <div className="stat-value">{value}</div>
-
-      {progress !== null && (
-        <div
-          className="stat-progress-bar-container"
-          role="progressbar"
-          aria-valuenow={progress}
-          aria-valuemin={0}
-          aria-valuemax={100}
-          aria-label="Task completion progress"
-        >
-          <div
-            className="stat-progress-bar-fill"
-            style={{ width: `${Math.min(100, Math.max(0, progress))}%` }}
-          />
-        </div>
-      )}
-
-      {subtitle && <div className="stat-footer-text">{subtitle}</div>}
+      <div className="stat-card-bottom">
+        <div className="stat-card-value">{value}</div>
+        {subtext && <div className="stat-card-subtext">{subtext}</div>}
+      </div>
     </div>
   );
 }

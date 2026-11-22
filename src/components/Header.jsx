@@ -1,56 +1,31 @@
 import React from "react";
-import { Menu, Bell, Calendar as CalendarIcon, Plus } from "lucide-react";
+import { LayoutGrid, ChevronDown } from "lucide-react";
 
-export default function Header({ onToggleMobileMenu, onOpenCreateModal }) {
-  const todayFormatted = new Date().toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
-
+export default function Header() {
   return (
     <header className="app-header" role="banner">
       <div className="header-left">
-        <button
-          type="button"
-          className="mobile-menu-btn"
-          onClick={onToggleMobileMenu}
-          aria-label="Toggle navigation menu"
-        >
-          <Menu size={20} />
-        </button>
-
+        {/* Desktop Breadcrumb */}
         <div className="breadcrumb-nav" aria-label="Breadcrumb">
-          <span>FocusBoard</span>
+          <span>Workspace</span>
           <span>/</span>
-          <span className="current">My Tasks Overview</span>
+          <span className="current">Overview</span>
+        </div>
+
+        {/* Mobile Compact Brand Header (Visible on screens <= 480px) */}
+        <div className="mobile-brand-header">
+          <div className="logo-icon-wrap" style={{ width: 26, height: 26, borderRadius: 6 }} aria-hidden="true">
+            <LayoutGrid size={15} strokeWidth={2.4} />
+          </div>
+          <span>FocusBoard</span>
         </div>
       </div>
 
       <div className="header-right">
-        <div className="header-date-badge" title="Current session date">
-          <CalendarIcon size={14} aria-hidden="true" />
-          <span>{todayFormatted}</span>
+        <div className="user-profile-avatar" title="Signed in as John Doe">
+          JD
         </div>
-
-        <button
-          type="button"
-          className="btn-icon header-notification-btn"
-          aria-label="View notifications (1 unread)"
-        >
-          <Bell size={18} />
-          <span className="notification-dot" aria-hidden="true" />
-        </button>
-
-        <button
-          type="button"
-          className="btn btn-primary"
-          onClick={onOpenCreateModal}
-          aria-label="Create new task"
-        >
-          <Plus size={16} strokeWidth={2.5} aria-hidden="true" />
-          <span>New Task</span>
-        </button>
+        <ChevronDown size={14} style={{ color: "#9CA3AF" }} aria-hidden="true" />
       </div>
     </header>
   );

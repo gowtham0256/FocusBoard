@@ -140,7 +140,7 @@ const searchUp = filterTasks(INITIAL_SAMPLE_TASKS, { searchQuery: "DESIGN" });
 assert("T14", "Search uppercase behaves identically (case-insensitive)", searchUp.length === searchLow.length);
 
 // --- T15: Search partial title ---
-const searchPart = filterTasks(INITIAL_SAMPLE_TASKS, { searchQuery: "impl" });
+const searchPart = filterTasks(INITIAL_SAMPLE_TASKS, { searchQuery: "nav" });
 assert("T15", "Search partial keyword finds matching tasks", searchPart.length >= 1);
 
 // --- T16: Search no results ---

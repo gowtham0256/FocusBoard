@@ -1,73 +1,74 @@
 /**
  * Initial sample tasks for FocusBoard
- * Evaluator requirement: At least six realistic sample tasks with unique IDs,
- * exact statuses ('To do', 'In progress', 'Completed'),
- * exact priorities ('Low', 'Medium', 'High'),
- * and realistic categories.
+ * Directly matching the Figma reference tasks:
+ * - "Design landing page" (Design, High, In progress, Nov 22)
+ * - "Fix mobile navigation" (Development, Medium, To do, Nov 24)
+ * - "Review onboarding copy" (Content, Low, Completed, Nov 19)
+ * plus additional realistic tasks for full CRUD & filtering tests.
  */
 
 export const INITIAL_SAMPLE_TASKS = [
   {
     id: "101",
-    title: "Complete UI Design",
-    description: "Finish the responsive dashboard layout and review typography scale across breakpoints.",
+    title: "Design landing page",
+    description: "Website redesign • Due soon",
     category: "Design",
     status: "In progress",
     priority: "High",
-    dueDate: "2026-11-25"
+    dueDate: "2026-11-22",
   },
   {
     id: "102",
-    title: "Implement Task CRUD Hooks",
-    description: "Set up immutable state updates for create, edit, delete, and quick status transitions.",
+    title: "Fix mobile navigation",
+    description: "Frontend sprint • UI polish",
     category: "Development",
-    status: "Completed",
-    priority: "High",
-    dueDate: "2026-11-22"
+    status: "To do",
+    priority: "Medium",
+    dueDate: "2026-11-24",
   },
   {
     id: "103",
-    title: "Accessibility and Keyboard Audit",
-    description: "Verify WCAG 2.1 AA compliance, focus management, visible focus rings, and screen reader labels.",
-    category: "Testing",
-    status: "To do",
-    priority: "Medium",
-    dueDate: "2026-11-28"
+    title: "Review onboarding copy",
+    description: "Content updates • Approved",
+    category: "Content",
+    status: "Completed",
+    priority: "Low",
+    dueDate: "2026-11-19",
   },
   {
     id: "104",
-    title: "User Flow and Usability Research",
-    description: "Conduct brief user testing on task filtering, search responsiveness, and carousel navigation.",
-    category: "Research",
-    status: "In progress",
-    priority: "Low",
-    dueDate: "2026-11-26"
+    title: "User authentication flow",
+    description: "Security review • OAuth 2.0 integration",
+    category: "Development",
+    status: "Completed",
+    priority: "High",
+    dueDate: "2026-11-20",
   },
   {
     id: "105",
-    title: "Configure localStorage Synchronization",
-    description: "Ensure safe serialization, error handling for blocked storage, and preservation of empty states.",
-    category: "Development",
-    status: "Completed",
+    title: "Quarterly roadmap planning",
+    description: "Sprint allocation • Milestone tracking",
+    category: "Planning",
+    status: "In progress",
     priority: "Medium",
-    dueDate: "2026-11-23"
+    dueDate: "2026-11-28",
   },
   {
     id: "106",
-    title: "Cross-Device Responsive Testing",
-    description: "Validate layout fidelity on Desktop (1440px), Tablet (768px), and Mobile (390px) viewports.",
-    category: "Testing",
+    title: "Conduct usability testing",
+    description: "User feedback analysis • Prototype review",
+    category: "Research",
     status: "To do",
-    priority: "High",
-    dueDate: "2026-11-27"
+    priority: "Low",
+    dueDate: "2026-11-30",
   },
   {
     id: "107",
-    title: "Optimize SVG Icons & Assets",
-    description: "Audit Lucide React icon imports for clean bundle sizing and fast initial paint.",
-    category: "Design",
+    title: "Performance optimization audit",
+    description: "Lighthouse audit • Asset compression",
+    category: "Development",
     status: "Completed",
-    priority: "Low",
-    dueDate: "2026-11-20"
-  }
+    priority: "High",
+    dueDate: "2026-11-18",
+  },
 ];
