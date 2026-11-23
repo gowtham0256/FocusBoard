@@ -13,6 +13,10 @@ export default function FocusNotes() {
     setActiveSlide((prev) => (prev - 1 + FOCUS_SLIDES.length) % FOCUS_SLIDES.length);
   };
 
+  const goToSlide = (index) => {
+    setActiveSlide(index);
+  };
+
   const current = FOCUS_SLIDES[activeSlide];
 
   return (
@@ -36,16 +40,23 @@ export default function FocusNotes() {
         <h2 className="focus-slide-title">{current.title}</h2>
         <p className="focus-slide-text">{current.description}</p>
 
-        {/* Interactive Slide Progress Track */}
+        {/* Clickable 3-Segment Slide Indicators */}
         <div
-          className="focus-carousel-progress-track"
+          className="focus-carousel-indicators"
           role="tablist"
           aria-label="Carousel slide indicators"
         >
-          <div
-            className="focus-carousel-progress-fill"
-            style={{ width: `${((activeSlide + 1) / FOCUS_SLIDES.length) * 100}%` }}
-          />
+          {FOCUS_SLIDES.map((slide, idx) => (
+            <button
+              key={slide.id}
+              type="button"
+              role="tab"
+              aria-selected={activeSlide === idx}
+              aria-label={`Go to slide ${idx + 1}: ${slide.title}`}
+              className={`carousel-indicator-segment ${activeSlide === idx ? "active" : ""}`}
+              onClick={() => goToSlide(idx)}
+            />
+          ))}
         </div>
       </div>
 
@@ -82,7 +93,7 @@ export default function FocusNotes() {
         <div className="carousel-arrow-buttons">
           <button
             type="button"
-            className="carousel-arrow-btn"
+            className="carousel-arrow-btn prev"
             onClick={previousSlide}
             aria-label="Previous focus note"
           >

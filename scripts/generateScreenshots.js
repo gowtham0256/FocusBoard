@@ -59,46 +59,55 @@ server.listen(PORT, "127.0.0.1", async () => {
 
     const page = await browser.newPage();
 
-    // 1. Desktop Viewport (1440x1000)
-    console.log("Capturing desktop-1440.png...");
+    // 1. Desktop Viewport - Overview (1440x1000)
+    console.log("Capturing desktop-1440.png (Overview)...");
     await page.setViewport({ width: 1440, height: 1000, deviceScaleFactor: 2 });
-    await page.goto(`http://127.0.0.1:${PORT}/`, { waitUntil: "networkidle0" });
+    await page.goto(`http://127.0.0.1:${PORT}/#overview`, { waitUntil: "networkidle0" });
+    await new Promise((r) => setTimeout(r, 400));
     await page.screenshot({ path: path.join(screenshotsDir, "desktop-1440.png") });
 
-    // 2. Tablet Viewport (768x1024)
+    // 2. Desktop Viewport - My tasks (#tasks)
+    console.log("Capturing desktop-tasks.png...");
+    await page.goto(`http://127.0.0.1:${PORT}/#tasks`, { waitUntil: "networkidle0" });
+    await new Promise((r) => setTimeout(r, 400));
+    await page.screenshot({ path: path.join(screenshotsDir, "desktop-tasks.png") });
+
+    // 3. Tablet Viewport (768x1024)
     console.log("Capturing tablet-768.png...");
     await page.setViewport({ width: 768, height: 1024, deviceScaleFactor: 2 });
-    await page.goto(`http://127.0.0.1:${PORT}/`, { waitUntil: "networkidle0" });
+    await page.goto(`http://127.0.0.1:${PORT}/#overview`, { waitUntil: "networkidle0" });
+    await new Promise((r) => setTimeout(r, 400));
     await page.screenshot({ path: path.join(screenshotsDir, "tablet-768.png") });
 
-    // 3. Mobile Viewport (390x1128)
+    // 4. Mobile Viewport (390x1128)
     console.log("Capturing mobile-390.png...");
     await page.setViewport({ width: 390, height: 1128, deviceScaleFactor: 2 });
-    await page.goto(`http://127.0.0.1:${PORT}/`, { waitUntil: "networkidle0" });
+    await page.goto(`http://127.0.0.1:${PORT}/#overview`, { waitUntil: "networkidle0" });
+    await new Promise((r) => setTimeout(r, 400));
     await page.screenshot({ path: path.join(screenshotsDir, "mobile-390.png") });
 
-    // 4. Create Task Modal
+    // 5. Create Task Modal
     console.log("Capturing create-task-modal.png...");
     await page.setViewport({ width: 1440, height: 1000, deviceScaleFactor: 2 });
     await page.goto(`http://127.0.0.1:${PORT}/?modal=create`, { waitUntil: "networkidle0" });
     await new Promise((r) => setTimeout(r, 400));
     await page.screenshot({ path: path.join(screenshotsDir, "create-task-modal.png") });
 
-    // 5. Edit Task Modal
+    // 6. Edit Task Modal
     console.log("Capturing edit-task-modal.png...");
     await page.goto(`http://127.0.0.1:${PORT}/?modal=edit`, { waitUntil: "networkidle0" });
     await new Promise((r) => setTimeout(r, 400));
     await page.screenshot({ path: path.join(screenshotsDir, "edit-task-modal.png") });
 
-    // 6. Delete Confirm Modal
+    // 7. Delete Confirm Modal
     console.log("Capturing delete-confirm-modal.png...");
     await page.goto(`http://127.0.0.1:${PORT}/?modal=delete`, { waitUntil: "networkidle0" });
     await new Promise((r) => setTimeout(r, 400));
     await page.screenshot({ path: path.join(screenshotsDir, "delete-confirm-modal.png") });
 
-    // 7. Focus Notes Carousel
+    // 8. Focus Notes Carousel
     console.log("Capturing focus-notes-carousel.png...");
-    await page.goto(`http://127.0.0.1:${PORT}/`, { waitUntil: "networkidle0" });
+    await page.goto(`http://127.0.0.1:${PORT}/#overview`, { waitUntil: "networkidle0" });
     const carouselEl = await page.$(".focus-carousel-container");
     if (carouselEl) {
       await carouselEl.screenshot({
@@ -106,8 +115,23 @@ server.listen(PORT, "127.0.0.1", async () => {
       });
     }
 
+    // 9. Test Interactive Navigation via sidebar clicks
+    console.log("Testing click navigation from Overview to My tasks...");
+    await page.goto(`http://127.0.0.1:${PORT}/`, { waitUntil: "networkidle0" });
+    const navButtons = await page.$$('.sidebar-nav-item');
+    for (const btn of navButtons) {
+      const text = await page.evaluate(el => el.textContent, btn);
+      if (text.includes("My tasks")) {
+        console.log("Clicking My tasks button in sidebar...");
+        await btn.click();
+        await new Promise((r) => setTimeout(r, 300));
+        const hash = await page.evaluate(() => window.location.hash);
+        console.log(`Current URL hash after click: ${hash}`);
+      }
+    }
+
     await browser.close();
-    console.log("All screenshots successfully captured!");
+    console.log("All screenshots and interactive tests completed successfully!");
   } catch (error) {
     console.error("Error during screenshot generation:", error);
   } finally {

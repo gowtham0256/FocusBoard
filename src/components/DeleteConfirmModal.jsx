@@ -8,8 +8,9 @@ export default function DeleteConfirmModal({
   onConfirmDelete,
 }) {
   const cancelBtnRef = useRef(null);
+  const modalRef = useRef(null);
 
-  // Focus cancel button on open for safety, and listen for Escape key
+  // Focus cancel button on open for safety, trap focus, and listen for Escape key
   useEffect(() => {
     if (isOpen) {
       setTimeout(() => {
@@ -19,6 +20,26 @@ export default function DeleteConfirmModal({
       const handleKeyDown = (e) => {
         if (e.key === "Escape") {
           onClose();
+          return;
+        }
+
+        // Focus trap
+        if (e.key === "Tab" && modalRef.current) {
+          const focusableElements = modalRef.current.querySelectorAll(
+            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+          );
+          if (focusableElements.length === 0) return;
+
+          const firstElement = focusableElements[0];
+          const lastElement = focusableElements[focusableElements.length - 1];
+
+          if (e.shiftKey && document.activeElement === firstElement) {
+            e.preventDefault();
+            lastElement.focus();
+          } else if (!e.shiftKey && document.activeElement === lastElement) {
+            e.preventDefault();
+            firstElement.focus();
+          }
         }
       };
       window.addEventListener("keydown", handleKeyDown);
@@ -35,6 +56,7 @@ export default function DeleteConfirmModal({
       role="presentation"
     >
       <div
+        ref={modalRef}
         className="modal-dialog"
         role="alertdialog"
         aria-modal="true"

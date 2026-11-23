@@ -97,3 +97,32 @@ export function isTaskOverdue(dueDateStr, status) {
     return false;
   }
 }
+
+/**
+ * Standard category list for FocusBoard
+ */
+export const VALID_CATEGORIES = ["Design", "Development", "Content", "Planning", "Research", "General"];
+
+/**
+ * Derives a valid category from task title and description when not explicitly chosen,
+ * guaranteeing every task satisfies the required category schema.
+ */
+export function inferCategory(title = "", description = "") {
+  const text = `${title} ${description}`.toLowerCase();
+  if (/design|ui|ux|wireframe|figma|landing|layout|visual|logo|style|theme|hero|color/i.test(text)) {
+    return "Design";
+  }
+  if (/dev|code|fix|bug|nav|mobile|api|auth|backend|frontend|perf|audit|optimization|security/i.test(text)) {
+    return "Development";
+  }
+  if (/content|copy|onboard|write|blog|text|docs|review|translation/i.test(text)) {
+    return "Content";
+  }
+  if (/plan|roadmap|sprint|allocat|track|milestone|schedule|quarter/i.test(text)) {
+    return "Planning";
+  }
+  if (/research|usability|test|feedback|interview|metric|survey/i.test(text)) {
+    return "Research";
+  }
+  return "General";
+}

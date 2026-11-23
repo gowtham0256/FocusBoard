@@ -152,7 +152,13 @@
   }
 
   .focus-carousel-right {
-    display: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .carousel-mini-task-card {
+    display: none !important;
   }
 
   /* Mobile 2 Compact Overview Cards (Figma: Total tasks & Completed) */

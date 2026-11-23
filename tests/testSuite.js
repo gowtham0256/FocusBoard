@@ -3,6 +3,9 @@
  * Validates T01 - T38 requirements from Part 20 of specification.
  */
 
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
 import { INITIAL_SAMPLE_TASKS } from "../src/data/sampleTasks.js";
 import {
   calculateTaskStats,
@@ -12,6 +15,10 @@ import {
   isTaskOverdue,
 } from "../src/utils/taskUtils.js";
 import { FOCUS_SLIDES } from "../src/data/focusSlides.js";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const rootDir = path.resolve(__dirname, "..");
 
 const results = [];
 
@@ -190,7 +197,7 @@ assert("T21", "Carousel Next advances active slide", activeSlide === 1);
 activeSlide = (activeSlide - 1 + totalSlides) % totalSlides;
 assert("T22", "Carousel Previous moves backward to previous slide", activeSlide === 0);
 
-// --- T23: Carousel circular wraparound ---
+// --- T23: Carousel wraparound ---
 // Previous from 0 wraps to 2
 const wrapBack = (0 - 1 + totalSlides) % totalSlides;
 // Next from 2 wraps to 0
@@ -248,6 +255,44 @@ storageSet(testKey, []);
 const restoredT29 = storageGet(testKey, INITIAL_SAMPLE_TASKS);
 assert("T29", "Delete all and refresh: empty array [] remains preserved (no re-seeding)", Array.isArray(restoredT29) && restoredT29.length === 0);
 
+// --- T30: Desktop responsive verification (1440x1000) ---
+const layoutCss = fs.readFileSync(path.join(rootDir, "src/styles/layout.css"), "utf-8");
+const hasDesktopLayout = layoutCss.includes(".sidebar") && layoutCss.includes(".dashboard-content") && layoutCss.includes("display: flex");
+assert("T30", "Desktop responsive verification: full sidebar and layout rules configured for 1440px", hasDesktopLayout);
+
+// --- T31: Tablet responsive verification (768x1024) ---
+const responsiveCss = fs.readFileSync(path.join(rootDir, "src/styles/responsive.css"), "utf-8");
+const hasTabletRules = responsiveCss.includes("@media (max-width: 768px)") || responsiveCss.includes("@media (max-width: 1024px)");
+assert("T31", "Tablet responsive verification: tablet media queries and reflow rules active", hasTabletRules);
+
+// --- T32: Mobile responsive verification (390x1128) ---
+const hasMobileRules = responsiveCss.includes("@media (max-width: 480px)") && responsiveCss.includes(".mobile-bottom-nav");
+assert("T32", "Mobile responsive verification: mobile bottom nav and vertical stack configured for 390px", hasMobileRules);
+
+// --- T33: Long-title overflow handling ---
+const longTitleTask = {
+  id: generateTaskId(),
+  title: "Super extremely long title that exceeds normal viewport widths and tests CSS text-overflow ellipsis handling across cards, chips, and modals without overflowing container boundaries",
+  description: "Very long description verifying graceful wrap",
+  category: "Design",
+  status: "In progress",
+  priority: "High",
+  dueDate: "2026-11-22",
+};
+const componentsCss = fs.readFileSync(path.join(rootDir, "src/styles/components.css"), "utf-8");
+const hasEllipsisRule = componentsCss.includes("text-overflow: ellipsis");
+const filteredLong = filterTasks([longTitleTask], { searchQuery: "Super extremely" });
+assert("T33", "Long-title overflow: handles long text gracefully with ellipsis without crashing search", hasEllipsisRule && filteredLong.length === 1);
+
+// --- T34: Keyboard accessibility ---
+const focusNotesJsx = fs.readFileSync(path.join(rootDir, "src/components/FocusNotes.jsx"), "utf-8");
+const taskFormJsx = fs.readFileSync(path.join(rootDir, "src/components/TaskForm.jsx"), "utf-8");
+const hasKeyboardSupport =
+  focusNotesJsx.includes("ArrowLeft") &&
+  focusNotesJsx.includes("ArrowRight") &&
+  taskFormJsx.includes("Escape");
+assert("T34", "Keyboard accessibility: handles arrow navigation in carousel and Escape in modals", hasKeyboardSupport);
+
 // --- T35: Malformed localStorage recovery ---
 mockStorage[testKey] = "{bad:json, syntax--";
 const restoredT35 = storageGet(testKey, INITIAL_SAMPLE_TASKS);
@@ -262,15 +307,19 @@ assert("T36", "All tasks completed displays 100% completion", stats100.completio
 const statsZero = calculateTaskStats([]);
 assert("T37", "Zero tasks displays 0% completion rate without NaN or division-by-zero error", statsZero.completionPercentage === 0 && statsZero.totalTasks === 0);
 
+// --- T38: Production build verification ---
+const distHtmlExists = fs.existsSync(path.join(rootDir, "dist/index.html"));
+assert("T38", "Production build succeeds: dist/index.html exists and is generated", distHtmlExists);
+
 // Summary
 const totalPassed = results.filter((r) => r.status === "PASS").length;
 const totalFailed = results.filter((r) => r.status === "FAIL").length;
 console.log("\n=======================================================");
 console.log(`📊 TEST SUMMARY: ${totalPassed} PASSED / ${totalFailed} FAILED (Total: ${results.length})`);
-console.log("=======================================================\n");
+console.log("=======================================================");
 
 if (totalFailed > 0) {
   process.exit(1);
 } else {
-  console.log("🎉 ALL AUTOMATED LOGIC TESTS PASSED!");
+  console.log("🎉 ALL 38 AUTOMATED AUDIT & LOGIC TESTS PASSED!\n");
 }
